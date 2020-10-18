@@ -89,9 +89,9 @@ func NewJoinGateway(paths ...*GatewayPath) (*joinGateway, error) {
 	return gw, gw.AddPaths(paths...)
 }
 
-func (gw *joinGateway) NodeRef() string { return gw.nodeRef }
-func (gw *joinGateway) Next() Node      { return gw.next }
-func (gw *joinGateway) SetNext(n Node)  { gw.next = n }
+func (gw joinGateway) NodeRef() string { return gw.nodeRef }
+func (gw joinGateway) Next() Node      { return gw.next }
+func (gw *joinGateway) SetNext(n Node) { gw.next = n }
 func (gw *joinGateway) Paths() Nodes {
 	var pp = make(Nodes, 0, len(gw.paths))
 	for _, p := range gw.paths {

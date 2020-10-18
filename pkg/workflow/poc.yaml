@@ -1,0 +1,173 @@
+# initial values
+set:
+  favNamespace: foo
+  bzbz: 342
+
+# start events
+events:
+  - type: beforeCreate
+    resource: compose/record
+    constraint:
+      module.handle: aModule
+    next: check price # proceed to one of the defined steps
+
+security:
+  runAs: foo
+
+steps:
+  load module:
+    (exec): moduleLookupByHandle
+    (args):
+      handle: foo
+    bzz: foo + bar
+
+  sign the doc:
+    (exec): docusignFoo
+    (args):
+      apiKey: dfsfdsfs
+    header.title: fffff
+    signature.name: Denis Arh
+
+  set record values:
+    (exec): changeRecordValues
+    (args):
+      field: expr
+      field[1]: expr
+
+  set record:
+    (exec): changeRecord
+    (args):
+      ownerID: currentUser.ID
+    (ref):
+    (next):
+
+  fork me:
+    (gateway:fork):
+      - a
+      - b
+      - c
+
+  # ///////////////////
+
+  set some vars:
+    foo: bar
+
+  choices:
+    gateway:
+    paths:
+      - if: condition...
+        do: node...
+
+  record loader:
+    exec: recordLookup
+    config:
+      namespace: favNamespace
+      module: foo
+      filter: some rfilter here
+    set: myLoadedRecord
+
+  record searcher:
+    (exec): recordSearch
+    (args):
+      namespace: favNamespace
+      module: foo
+      filter: some rfilter here
+    set: myRecordResults
+
+  ajax magic:
+    (exec): httpPost
+    (args):
+      url: https:/.....
+      params: .....
+      retries: 5
+
+    somevar: returvalue
+
+  inline eval:
+    (exec): goja
+    (args):
+      code: |
+        // some custom JS executed by embeded javascript inside go
+
+
+  manually trigger corredor script:
+    exec: corredorScript
+    config:
+      script: name of the script
+      args:
+        record: myLoadedRecord
+        module: foo
+        namespace: ns
+
+  check price:
+    gateway:
+      # series of configured checks and outcomes
+      - if: myLoadedRecord.values.price > 1000
+        # reference next task (could be defined inline as well)
+        next: handle over 1k
+
+  handle over 1k:
+    action: set
+    config:
+      # copy value of foo into bar
+      somerec.values.bar: bar.values.foo
+      # changing multiple rec
+      somerec.values.baz[0]: "new value of 1st item in baz"
+      # remove foo
+      otherrec.values.foo:
+      # copy all
+      otherrec.values: myrec.values
+    next: generateID
+
+  generate ID:
+    # we need type:recordModifier so it can understand and translate references like $record.values.IDfield...
+    action: nextSequenceValue
+    # will create new or use existing sequence
+    config:
+      ref: aModuleRecordID,
+      starts: 1,
+      interval: 1,
+      set: record.values.IDfield
+
+  split in parallel:
+    gateway:
+      - next: foo1
+      - next: foo2
+      - next: foo3
+
+  # composite action
+  send notification:
+    # steps, defined as list
+    do:
+      - gateway:
+          # if condition is true and no next step is defined,
+          # consider this a final step
+          - if: { record.values.dnd: true }
+        input:
+          record: compose/record
+
+      - action: set
+        config:
+          - { variable: subject, type: string, value: "this is my subj" }
+          - { variable: from, type: string, ref: record.owner.email }
+        input:
+          record: compose/record
+
+      - action: renderTemplate
+        # @todo
+
+      - action: sendEmail
+        config:
+          - { to: "some.email@example.tld" }
+
+
+
+
+foo = 4
+refpolje.foo = 4
+
+
+
+
+
+
