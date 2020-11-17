@@ -37,8 +37,7 @@ steps:
     - make upload
     when:
       event: [ push ]
-      branch:
-       - 2020.12.x-feature-federation
+      branch: [ 2020.12.x-feature-federation ]
 
 ---
 
