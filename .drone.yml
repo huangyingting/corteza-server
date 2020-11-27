@@ -39,6 +39,7 @@ steps:
       event: [ push ]
       branch:
        - unstable
+       - 2020.12.x-feature-scim
 
 ---
 

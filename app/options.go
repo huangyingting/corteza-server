@@ -22,6 +22,7 @@ type (
 		HTTPServer  options.HTTPServerOpt
 		Websocket   options.WebsocketOpt
 		Eventbus    options.EventbusOpt
+		SCIM        options.SCIMOpt
 	}
 )
 
@@ -44,5 +45,6 @@ func NewOptions() *Options {
 		HTTPServer:  *options.HTTPServer(),
 		Websocket:   *options.Websocket(),
 		Eventbus:    *options.Eventbus(),
+		SCIM:        *options.SCIM(),
 	}
 }
